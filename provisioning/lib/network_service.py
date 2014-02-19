@@ -1,3 +1,4 @@
+NETWORK_NAME = "s210664-assignment"
 class NetworkService:
 
     def __init__(self, network_client):
@@ -5,14 +6,27 @@ class NetworkService:
         self._network_id = None
 
     def setup_network(self):
-        self._create_network()
+        self._setup_network()
         self._create_subnet()
 
+    def _setup_network(self):
+        if (not self._network_exists()):
+            self._create_network()
+
     def _create_network(self):
-        network = {"network": {"name": "s210664-assignment",
+        network = {"network": {"name": NETWORK_NAME,
                                "admin_state_up": True}}
         response = self._network_client.create_network(network)
         self._network_id = response["network"]["id"]
+
+    def _network_exists(self):
+        networks = self._network_client.list_networks()['networks']
+        print networks
+        for network in networks:
+            if network['name'] == NETWORK_NAME:
+                self._network_id = network['id']
+                return True
+        return False
 
     def _create_subnet(self):
         subnet = {"name": "s210664-assignment", "ip_version": "4",
