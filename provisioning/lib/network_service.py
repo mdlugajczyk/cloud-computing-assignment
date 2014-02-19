@@ -15,8 +15,8 @@ class NetworkService:
         self._network_id = response["network"]["id"]
 
     def _create_subnet(self):
-        print self._network_id
         subnet = {"name": "s210664-assignment", "ip_version": "4",
                   "network_id": self._network_id,
-                  "dns_nameservers": ["10.7.0.3"]}
+                  "dns_nameservers": ["10.7.0.3"],
+                  "cidr": "192.170.0.0/24"}
         self._network_client.create_subnet({"subnet": subnet})

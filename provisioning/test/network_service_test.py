@@ -19,7 +19,8 @@ class NetworkServiceTest(unittest.TestCase):
         self._service.setup_network()
         subnet = {"name": "s210664-assignment", "ip_version": "4",
                   "network_id": "c51a9627-dd94-4f0e-91d2-fe5ac5cf3e73",
-                  "dns_nameservers": ["10.7.0.3"]}
+                  "dns_nameservers": ["10.7.0.3"],
+                  "cidr": "192.170.0.0/24"}
         verify(self._client).create_subnet({"subnet": subnet})
 
     def _setup_client(self):
