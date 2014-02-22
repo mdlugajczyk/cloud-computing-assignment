@@ -1,5 +1,10 @@
 from factory.service_factory import ServiceFactory
 
-service = ServiceFactory.create_network_service()
-service.setup_network()
+service_factory = ServiceFactory()
+net_service = service_factory.create_network_service()
+net_service.setup_network()
+
+sec_service = service_factory.create_security_service()
+sec_service.setup_security()
+
 

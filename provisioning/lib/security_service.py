@@ -41,7 +41,7 @@ class SecurityService:
     def _create_rule(self, protocol, port):
         default_group = self._default_secgroup()
         self._rules_manager.create(default_group.id,
-                                   protocol_name=protocol,
+                                   ip_protocol=protocol,
                                    from_port=port,
                                    to_port=port,
                                    cidr=IP_RANGE)

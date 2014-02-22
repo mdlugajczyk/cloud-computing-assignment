@@ -21,7 +21,7 @@ class SecurityServiceTest(unittest.TestCase):
         
     def test_creates_security_rule_for_ssh(self):
         self._service.setup_security()
-        verify(self._rules_manager).create(GROUP_ID, protocol_name="tcp",
+        verify(self._rules_manager).create(GROUP_ID, ip_protocol="tcp",
                                            from_port=22, to_port=22,
                                            cidr="0.0.0.0/0")
 
@@ -31,7 +31,7 @@ class SecurityServiceTest(unittest.TestCase):
 
     def test_creates_security_rule_for_ping(self):
         self._service.setup_security()
-        verify(self._rules_manager).create(GROUP_ID, protocol_name="icmp",
+        verify(self._rules_manager).create(GROUP_ID, ip_protocol="icmp",
                                            from_port=-1, to_port=-1,
                                            cidr="0.0.0.0/0")
 
@@ -46,7 +46,7 @@ class SecurityServiceTest(unittest.TestCase):
                   'ip_range': {'cidr': '0.0.0.0/0'},
                   'id': '33fa6d6a-b02e-46bf-bf70-5da83ddae144'}]
         self._default_group.rules = rules
-        when(self._rules_manager).create(any(), protocol_name="tcp",
+        when(self._rules_manager).create(any(), ip_protocol="tcp",
                                            from_port=22, to_port=22,
                                            cidr=any()).thenRaise(Exception)
 
@@ -60,7 +60,7 @@ class SecurityServiceTest(unittest.TestCase):
                   'ip_range': {'cidr': '0.0.0.0/0'},
                   'id': '33fa6d6a-b02e-46bf-bf70-5da83ddae144'}]
         self._default_group.rules = rules
-        when(self._rules_manager).create(any(), protocol_name=protocol,
+        when(self._rules_manager).create(any(), ip_protoco=protocol,
                                            from_port=port, to_port=port,
                                            cidr=any()).thenRaise(Exception)
         
