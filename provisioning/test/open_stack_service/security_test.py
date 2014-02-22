@@ -1,6 +1,6 @@
 import unittest
 from mockito import Mock, when, verify, any
-from security_service import SecurityService
+from lib.open_stack_service.security import SecurityService
 from novaclient.v1_1.security_groups import SecurityGroup
 
 GROUP_ID = "group-id"

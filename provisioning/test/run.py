@@ -1,4 +1,4 @@
-from factory.service_factory import ServiceFactory
+from lib.factory.service_factory import ServiceFactory
 
 service_factory = ServiceFactory()
 net_service = service_factory.create_network_service()

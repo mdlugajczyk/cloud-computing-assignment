@@ -1,5 +1,5 @@
-from network_service import NetworkService
-from security_service import SecurityService
+from lib.open_stack_service.network import NetworkService
+from lib.open_stack_service.security import SecurityService
 from api_client_factory import ApiClientFactory
 
 
