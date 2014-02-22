@@ -1,6 +1,7 @@
 NETWORK_NAME = "s210664-assignment-net"
 SUBNET_NAME = "s210664-assignment-subnet"
 
+
 class NetworkService:
 
     def __init__(self, network_client):

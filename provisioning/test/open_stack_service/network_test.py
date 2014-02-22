@@ -7,6 +7,7 @@ NETWORK_ID = "5df84b0d2e4f48468824415146c684e5"
 NETWORK_NAME = "s210664-assignment-net"
 SUBNET_NAME = "s210664-assignment-subnet"
 
+
 class NetworkServiceTest(unittest.TestCase):
 
     def setUp(self):
@@ -80,5 +81,3 @@ class NetworkServiceTest(unittest.TestCase):
                     'id': '495075eb-d0af-4cb2-945d-c0a60325c969'}]
         when(self._client).list_subnets().thenReturn({"subnets": subnets})
         when(self._client).create_subnet(any()).thenRaise(Exception)
-        
-        

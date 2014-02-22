@@ -4,10 +4,11 @@ from novaclient.v1_1.images import Image
 from mockito import Mock, verify, any, when
 
 
-KEY_NAME="key_name"
-IMAGE_ID="image id"
-IMAGE_NAME="ubuntu-precise"
-NETWORK="network id"
+KEY_NAME = "key_name"
+IMAGE_ID = "image id"
+IMAGE_NAME = "ubuntu-precise"
+NETWORK = "network id"
+
 
 class ServerServiceTest(unittest.TestCase):
 
@@ -45,7 +46,7 @@ class ServerServiceTest(unittest.TestCase):
         verify(self._servers_manager).create(any(), any(), any(),
                                              nics=[{"net-id": NETWORK}],
                                              key_name=any())
-        
+
     def _setup_images_manager(self):
         image_list = [Image(Mock(), {"id": IMAGE_ID, "name": IMAGE_NAME}),
                       Image(Mock(), {"id": "image id", "name": "image"})]
@@ -53,4 +54,3 @@ class ServerServiceTest(unittest.TestCase):
 
     def _boot_servers(self, number_servers):
         return self._service.boot_servers(number_servers, NETWORK)
-    

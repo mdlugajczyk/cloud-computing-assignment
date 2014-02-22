@@ -30,6 +30,7 @@ class ApiClientFactory:
     def create_security_rules_manager(self):
         nova = self.create_nova_client()
         return nova.security_group_rules
-        
 
-        
+    def create_keypairs_manager(self):
+        nova = self.create_nova_client()
+        return nova.keypairs

@@ -17,11 +17,11 @@ class ServerService:
             server = self._boot_server(i, image, network)
             servers.append(server)
         return servers
-    
+
     def _image_id(self):
         for image in self._images_manager.list():
             if image.name == self._image_name:
-                return image.id            
+                return image.id
 
     def _boot_server(self, index, image, network):
         nics = [{"net-id": network}]
