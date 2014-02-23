@@ -1,12 +1,10 @@
 import unittest
-from lib.open_stack_service.server import ServerService
-from novaclient.v1_1.images import Image
 from mockito import Mock, verify, any, when
+from novaclient.v1_1.images import Image
+from lib.open_stack_service.server import ServerService
+from lib.model.configuration import Configuration
 
-
-KEY_NAME = "key_name"
 IMAGE_ID = "image id"
-IMAGE_NAME = "ubuntu-precise"
 NETWORK = "network id"
 
 
@@ -15,10 +13,11 @@ class ServerServiceTest(unittest.TestCase):
     def setUp(self):
         self._servers_manager = Mock()
         self._images_manager = Mock()
+        self._conf = Configuration()
         self._setup_images_manager()
         self._service = ServerService(self._servers_manager,
                                       self._images_manager,
-                                      KEY_NAME, IMAGE_NAME)
+                                      self._conf)
 
     def test_creates_required_number_of_servers(self):
         servers = self._boot_servers(3)
@@ -34,7 +33,7 @@ class ServerServiceTest(unittest.TestCase):
     def test_creates_vms_with_proper_key(self):
         self._boot_servers(1)
         verify(self._servers_manager).create(any(), any(), any(), nics=any(),
-                                             key_name=KEY_NAME)
+                                             key_name=self._conf.ssh_key_name)
 
     def test_creates_vm_with_proper_image(self):
         self._boot_servers(1)
@@ -48,7 +47,8 @@ class ServerServiceTest(unittest.TestCase):
                                              key_name=any())
 
     def _setup_images_manager(self):
-        image_list = [Image(Mock(), {"id": IMAGE_ID, "name": IMAGE_NAME}),
+        image_list = [Image(Mock(), {"id": IMAGE_ID,
+                                     "name": self._conf.image_name}),
                       Image(Mock(), {"id": "image id", "name": "image"})]
         when(self._images_manager).list().thenReturn(image_list)
 

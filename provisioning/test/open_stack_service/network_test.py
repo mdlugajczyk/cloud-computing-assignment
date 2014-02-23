@@ -15,8 +15,9 @@ class NetworkServiceTest(unittest.TestCase):
         self._service = NetworkService(self._client)
 
     def test_creates_network(self):
-        self._service.setup_network()
+        network_id = self._service.setup_network()
         self._verify_creates_network()
+        self.assertEquals(network_id, NETWORK_ID)
 
     def test_creates_subnet_with_network_id(self):
         self._service.setup_network()
@@ -24,8 +25,9 @@ class NetworkServiceTest(unittest.TestCase):
 
     def test_reuse_network(self):
         self._given_network_already_exists()
-        self._service.setup_network()
+        network_id = self._service.setup_network()
         self._verify_creates_subnet_with_network_id()
+        self.assertEqual(network_id, NETWORK_ID)
 
     def test_reuse_subnet(self):
         self._given_subnet_already_exists()

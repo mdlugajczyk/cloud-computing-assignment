@@ -11,6 +11,7 @@ class NetworkService:
     def setup_network(self):
         self._setup_network()
         self._setup_subnet()
+        return self._network_id
 
     def _setup_network(self):
         if (not self._network_exists()):

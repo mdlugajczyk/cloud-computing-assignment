@@ -34,3 +34,11 @@ class ApiClientFactory:
     def create_keypairs_manager(self):
         nova = self.create_nova_client()
         return nova.keypairs
+
+    def create_servers_manager(self):
+        nova = self.create_nova_client()
+        return nova.servers
+
+    def create_images_manager(self):
+        nova = self.create_nova_client()
+        return nova.images

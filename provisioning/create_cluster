@@ -1,10 +1,12 @@
+#!/usr/bin/env python
+
 from lib.factory.service_factory import ServiceFactory
 
 service_factory = ServiceFactory()
 net_service = service_factory.create_network_service()
-net_service.setup_network()
-
 sec_service = service_factory.create_security_service()
+server_service = service_factory.create_server_service()
+
+network_id = net_service.setup_network()
 sec_service.setup_security()
-
-
+server_service.boot_servers(3, network_id)
