@@ -1,3 +1,6 @@
+from lib.model.server import Server
+
+
 class ServerService:
 
     def __init__(self, servers_manager, images_manager, configuration):
@@ -23,6 +26,7 @@ class ServerService:
 
     def _boot_server(self, index, image, network):
         nics = [{"net-id": network}]
-        return self._servers_manager.create("s210664-vm-%d" % index,
+        server = self._servers_manager.create("s210664-vm-%d" % index,
                                             image, "1", nics=nics,
                                             key_name=self._config.ssh_key_name)
+        return Server(name=server.name, id=server.id)

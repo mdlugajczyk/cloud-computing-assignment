@@ -1,12 +1,14 @@
 import unittest
 from mockito import Mock, verify, any, when
 from novaclient.v1_1.images import Image
+from novaclient.v1_1.servers import Server as NovaServer
 from lib.open_stack_service.server import ServerService
 from lib.model.configuration import Configuration
 
 IMAGE_ID = "image id"
 NETWORK = "network id"
-
+SERVER_ID = "server id"
+SERVER_NAME = "sever name"
 
 class ServerServiceTest(unittest.TestCase):
 
@@ -15,6 +17,9 @@ class ServerServiceTest(unittest.TestCase):
         self._images_manager = Mock()
         self._conf = Configuration()
         self._setup_images_manager()
+        server = NovaServer(Mock(), {"name": SERVER_NAME, "id": SERVER_ID})
+        when(self._servers_manager).create(any(), any(), any(), nics=any(),
+                                           key_name=any()).thenReturn(server)
         self._service = ServerService(self._servers_manager,
                                       self._images_manager,
                                       self._conf)
@@ -46,11 +51,18 @@ class ServerServiceTest(unittest.TestCase):
                                              nics=[{"net-id": NETWORK}],
                                              key_name=any())
 
+    def test_returns_created_servers(self):
+        servers = self._boot_servers(1)
+        server = servers[0]
+        self.assertEquals(server.name, SERVER_NAME)
+        self.assertEquals(server.id, SERVER_ID)
+
     def _setup_images_manager(self):
         image_list = [Image(Mock(), {"id": IMAGE_ID,
                                      "name": self._conf.image_name}),
                       Image(Mock(), {"id": "image id", "name": "image"})]
         when(self._images_manager).list().thenReturn(image_list)
+
 
     def _boot_servers(self, number_servers):
         return self._service.boot_servers(number_servers, NETWORK)
