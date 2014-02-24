@@ -6,14 +6,18 @@ from mockito import Mock, verify, when, any
 NETWORK_ID = "5df84b0d2e4f48468824415146c684e5"
 NETWORK_NAME = "s210664-assignment-net"
 SUBNET_NAME = "s210664-assignment-subnet"
-
+PUBLIC_NETWORK_NAME = "public"
+PUBLIC_NETWORK_ID = "public network id"
+ROUTER_ID = "router id"
 
 class NetworkServiceTest(unittest.TestCase):
 
     def setUp(self):
         self._setup_client()
         self._service = NetworkService(self._client)
-
+        self._given_public_network_exists()
+        self._given_create_router_returns_proper_response()
+        
     def test_creates_network(self):
         network_id = self._service.setup_network()
         self._verify_creates_network()
@@ -32,6 +36,14 @@ class NetworkServiceTest(unittest.TestCase):
     def test_reuse_subnet(self):
         self._given_subnet_already_exists()
         self._service.setup_network()
+
+    def test_creates_router(self):
+        self._service.setup_network()
+        self._verify_creates_router()
+
+    def test_sets_router_gateway(self):
+        self._service.setup_network()
+        self._verify_sets_gateway()
 
     def _setup_client(self):
         self._client = Mock()
@@ -56,14 +68,11 @@ class NetworkServiceTest(unittest.TestCase):
         verify(self._client).create_subnet({"subnet": subnet})
 
     def _given_network_already_exists(self):
-        networks = {u'status': u'ACTIVE',
-                    u'subnets': [u'495075eb-d0af-4cb2-945d-c0a60325c969'],
-                    u'name': NETWORK_NAME, u'admin_state_up': True,
-                    u'tenant_id': u'5df84b0d2e4f48468824415146c684e5',
-                    u'router:external': False, u'shared': False, u'id':
-                    NETWORK_ID}
+        network = self._network_with_name_and_id(NETWORK_NAME, NETWORK_ID)
+        pub = self._network_with_name_and_id(PUBLIC_NETWORK_NAME,
+                                             PUBLIC_NETWORK_ID)
         when(self._client).list_networks().thenReturn({"networks":
-                                                       [networks]})
+                                                       [network, pub]})
         when(self._client).create_network(any()).thenRaise(Exception)
 
     def _verify_creates_network(self):
@@ -83,3 +92,35 @@ class NetworkServiceTest(unittest.TestCase):
                     'id': '495075eb-d0af-4cb2-945d-c0a60325c969'}]
         when(self._client).list_subnets().thenReturn({"subnets": subnets})
         when(self._client).create_subnet(any()).thenRaise(Exception)
+
+    def _verify_creates_router(self):
+        router = {"router": {"name": "s210664-router"}}
+        verify(self._client).create_router(router)
+
+    def _network_with_name_and_id(self, name, id):
+       return {u'status': u'ACTIVE',
+               u'subnets': [u'495075eb-d0af-4cb2-945d-c0a60325c969'],
+               u'name': name, u'admin_state_up': True,
+               u'tenant_id': u'5df84b0d2e4f48468824415146c684e5',
+               u'router:external': False, u'shared': False, u'id':
+               id}
+
+    def _given_public_network_exists(self):
+        pub = self._network_with_name_and_id(PUBLIC_NETWORK_NAME,
+                                             PUBLIC_NETWORK_ID)
+        when(self._client).list_networks().thenReturn({"networks":
+                                                       [pub]})
+
+    def _verify_sets_gateway(self):
+        net_arg = {"network_id": PUBLIC_NETWORK_ID}        
+        verify(self._client).add_gateway_router(ROUTER_ID, net_arg)
+
+    def _given_create_router_returns_proper_response(self):
+        router_response = {u'router': {'status': 'ACTIVE',
+                                       'external_gateway_info':
+                                       None, 'name': 'some name',
+                                       'admin_state_up': True,
+                                       'tenant_id':
+                                       '5df84b0d2e4f48468824415146c684e5',
+                                       'id': ROUTER_ID}}
+        when(self._client).create_router(any()).thenReturn(router_response)
