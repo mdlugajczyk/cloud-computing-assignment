@@ -1,5 +1,6 @@
 import unittest
 from mockito import Mock, verify, any, when
+from mock import Mock as mockMock
 from novaclient.v1_1.images import Image
 from novaclient.v1_1.servers import Server as NovaServer
 from lib.open_stack_service.server import ServerService
@@ -50,6 +51,15 @@ class ServerServiceTest(unittest.TestCase):
         verify(self._servers_manager).create(any(), any(), any(),
                                              nics=[{"net-id": NETWORK}],
                                              key_name=any())
+    def test_destroys_created_vms(self):
+        server1 = mockMock()
+        server2 = mockMock()
+        server1.name = "s210664-vm-0"
+        server1.name = "s210664-vm-1"
+        when(self._servers_manager).list().thenReturn([server1, server2])
+        self._service.delete_vms()
+        server1.delete.assert_called_once_with()
+        server2.delete.assert_called_once_with()
 
     def test_returns_created_servers(self):
         servers = self._boot_servers(1)

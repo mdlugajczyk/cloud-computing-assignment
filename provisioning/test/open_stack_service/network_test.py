@@ -15,6 +15,7 @@ SUBNET_ID = "subnet id"
 PUBLIC_NETWORK_NAME = "public"
 PUBLIC_NETWORK_ID = "public network id"
 ROUTER_ID = "router id"
+ROUTER_NAME = "s210664-router"
 PORT_ID = "port id"
 SERVER_ID = "server id"
 
@@ -51,6 +52,10 @@ class NetworkServiceTest(unittest.TestCase):
         self._service.setup_network()
         self._verify_creates_router()
 
+    def test_reuse_router(self):
+        self._given_router_alread_exists()
+        self._service.setup_network()
+
     def test_sets_router_gateway(self):
         self._service.setup_network()
         self._verify_sets_gateway()
@@ -61,9 +66,10 @@ class NetworkServiceTest(unittest.TestCase):
                                                   {"subnet_id": SUBNET_ID})
 
     def test_sets_ip_to_server(self):
-        self._given_server_port_exists()
+        self._given_server_port_exists_with_delay()
         self._service.assign_ip(self._server)
         self._verify_ip_is_assigned()
+
 
     def _setup_client(self):
         self._client = Mock()
@@ -79,6 +85,7 @@ class NetworkServiceTest(unittest.TestCase):
         when(self._client).create_network(network).thenReturn(response)
         when(self._client).list_networks().thenReturn({"networks": []})
         when(self._client).list_subnets().thenReturn({"subnets": []})
+        when(self._client).list_routers().thenReturn({"routers": []})
 
     def _verify_creates_subnet_with_network_id(self):
         verify(self._client).create_subnet(SUBNET)
@@ -148,9 +155,10 @@ class NetworkServiceTest(unittest.TestCase):
     def _setup_server(self):
         self._server = Server(id=SERVER_ID)
 
-    def _given_server_port_exists(self):
+    def _given_server_port_exists_with_delay(self):
+        empty_ports = {'ports': []}
         ports = {'ports': [{'id': PORT_ID, 'device_id': SERVER_ID}]}
-        when(self._client).list_ports().thenReturn(ports)
+        when(self._client).list_ports().thenReturn(empty_ports).thenReturn(empty_ports).thenReturn(ports)
 
     def _verify_ip_is_assigned(self):
         create_ip_request = {"floatingip":
@@ -158,3 +166,7 @@ class NetworkServiceTest(unittest.TestCase):
                               "port_id": PORT_ID}}
         verify(self._client).create_floatingip(create_ip_request)
 
+    def _given_router_alread_exists(self):
+        routers = {"routers": [{"name": ROUTER_NAME, "id": ROUTER_ID}]}
+        when(self._client).list_routers().thenReturn(routers)
+        when(self._client).create_router(any()).thenRaise(Exception)

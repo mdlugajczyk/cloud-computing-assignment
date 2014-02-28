@@ -1,6 +1,9 @@
+import time
+
+
 NETWORK_NAME = "s210664-assignment-net"
 SUBNET_NAME = "s210664-assignment-subnet"
-
+ROUTER_NAME = "s210664-router"
 
 class NetworkService:
 
@@ -20,22 +23,34 @@ class NetworkService:
         return self._network_id
 
     def _create_ip_for_port_in_network(self, port_id, network_id):
-        create_ip_request = {"floatingip": {"floating_network_id": network_id,
+        create_ip_request = {"floatingip": {"floating_network_id":
+                                            network_id,
                                             "port_id": port_id}}
         self._network_client.create_floatingip(create_ip_request)
 
     def _public_network_id(self):
-        networks = self._get_networks()
-        public_network = self._record_with_name(networks, 'public')
+        public_network = self._find_public_network()
         return public_network['id']
         
     def _port_id_for_server(self, server_id):
+        max_retry_count = 10
+        for retry in range(max_retry_count):
+            port = self._try_retrieve_server_port_number(server_id)
+            if port:
+                return port
+            time.sleep(1)
+
+    def _try_retrieve_server_port_number(self, server_id):
         ports_request = {"device_id": server_id}
         ports = self._network_client.list_ports()['ports']
-        return next(p['id'] for p in ports if p['device_id'] == server_id)
+        return next((p['id'] for p in ports if p['device_id'] == server_id),
+                    None)
 
     def _setup_network(self):
-        if (not self._network_exists(NETWORK_NAME)):
+        network = self._network_with_name(NETWORK_NAME)
+        if network:
+            self._network_id = network['id']
+        else:
             self._create_network()
 
     def _create_network(self):
@@ -44,27 +59,20 @@ class NetworkService:
         response = self._network_client.create_network(network)
         self._network_id = response["network"]["id"]
 
-    def _network_exists(self, network_name):
+    def _network_with_name(self, network_name):
         networks = self._get_networks()
-        network = self._record_with_name(networks, network_name)
-        if network:
-            self._network_id = network['id']
-            return True
-        else:
-            return False
+        return self._record_with_name(networks, network_name)
 
     def _setup_subnet(self):
-        if (not self._subnet_exists()):
-            self._create_subnet()
-
-    def _subnet_exists(self):
-        subnets = self._network_client.list_subnets()['subnets']
-        subnet = self._record_with_name(subnets, SUBNET_NAME)
+        subnet = self._subnet()
         if subnet:
             self._subnet_id = subnet['id']
-            return True
         else:
-            return False
+            self._create_subnet()
+
+    def _subnet(self):
+        subnets = self._network_client.list_subnets()['subnets']
+        return self._record_with_name(subnets, SUBNET_NAME)
 
     def _create_subnet(self):
         subnet = {"name": "s210664-assignment-subnet", "ip_version": "4",
@@ -75,12 +83,23 @@ class NetworkService:
         self._subnet_id = response['subnet']['id']
 
     def _setup_router(self):
-        self._create_router()
+        router = self._router()
+        if router:
+            self._router_id = router['id']
+        else:
+            self._create_router()
+            self._connect_router()
+
+    def _router(self):
+        routers = self._network_client.list_routers()['routers']
+        return self._record_with_name(routers, ROUTER_NAME)
+        
+    def _connect_router(self):
         self._set_router_gateway()
         self._set_router_interface()
 
     def _create_router(self):
-        router = {"router": {"name": "s210664-router"}}
+        router = {"router": {"name": ROUTER_NAME}}
         created_router = self._network_client.create_router(router)
         self._router_id = created_router['router']['id']
 

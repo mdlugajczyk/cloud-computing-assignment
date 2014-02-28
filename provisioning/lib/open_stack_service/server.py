@@ -8,6 +8,11 @@ class ServerService:
         self._images_manager = images_manager
         self._config = configuration
 
+    def delete_vms(self):
+        servers = self._servers_manager.list()
+        for server in servers:
+            server.delete()
+
     def boot_servers(self, number_servers, network):
         image = self._image_id()
         return self._boot_servers_with_image(image, number_servers, network)
