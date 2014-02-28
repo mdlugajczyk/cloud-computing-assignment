@@ -149,9 +149,8 @@ class NetworkServiceTest(unittest.TestCase):
         self._server = Server(id=SERVER_ID)
 
     def _given_server_port_exists(self):
-        list_ports_request = {"device_id": SERVER_ID}
         ports = {'ports': [{'id': PORT_ID, 'device_id': SERVER_ID}]}
-        when(self._client).list_ports(list_ports_request).thenReturn(ports)
+        when(self._client).list_ports().thenReturn(ports)
 
     def _verify_ip_is_assigned(self):
         create_ip_request = {"floatingip":
