@@ -1,6 +1,8 @@
 from lib.open_stack_service.network import NetworkService
 from lib.open_stack_service.security import SecurityService
 from lib.open_stack_service.server import ServerService
+from lib.open_stack_service.node_availability_checker import NodeAvailabilityChecker
+import paramiko
 from lib.model.configuration import Configuration
 from api_client_factory import ApiClientFactory
 
@@ -27,3 +29,8 @@ class ServiceFactory:
         images_manager = self._api_factory.create_images_manager()
         config = Configuration()
         return ServerService(servers_manager, images_manager, config)
+
+    def create_node_checker(self):
+        ssh = paramiko.SSHClient()
+        conf = Configuration()
+        return NodeAvailabilityChecker(ssh, conf)

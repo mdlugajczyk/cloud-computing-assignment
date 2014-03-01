@@ -11,5 +11,9 @@ server_service = service_factory.create_server_service()
 network_id = net_service.setup_network()
 sec_service.setup_security()
 time.sleep(3)
-server = server_service.boot_servers(1, network_id)[0]
-net_service.assign_ip(server)
+servers = server_service.boot_servers(10, network_id)
+
+for server in servers:
+    net_service.assign_ip(server)
+checker = service_factory.create_node_checker()
+checker.wait_for_nodes(servers)

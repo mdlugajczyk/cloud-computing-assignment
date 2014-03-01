@@ -1,6 +1,6 @@
 class Server:
 
-    def __init__(self, name=None, address=None, id=None):
+    def __init__(self, name=None, ip=None, id=None):
         self.name = name
-        self.address = address
+        self.ip = ip
         self.id = id

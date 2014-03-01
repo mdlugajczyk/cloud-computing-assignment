@@ -14,7 +14,8 @@ class NetworkService:
     def assign_ip(self, server):
         port_id = self._port_id_for_server(server.id)
         public_network = self._public_network_id()
-        self._create_ip_for_port_in_network(port_id, public_network)
+        ip = self._create_ip_for_port_in_network(port_id, public_network)
+        server.ip = ip
 
     def setup_network(self):
         self._setup_network()
@@ -26,7 +27,8 @@ class NetworkService:
         create_ip_request = {"floatingip": {"floating_network_id":
                                             network_id,
                                             "port_id": port_id}}
-        self._network_client.create_floatingip(create_ip_request)
+        response = self._network_client.create_floatingip(create_ip_request)
+        return response['floatingip']['floating_ip_address']
 
     def _public_network_id(self):
         public_network = self._find_public_network()

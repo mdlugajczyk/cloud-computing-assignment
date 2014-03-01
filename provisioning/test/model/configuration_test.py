@@ -28,3 +28,11 @@ class ConfigurationTest(unittest.TestCase):
     def test_can_set_value_for_image_name(self):
         config = Configuration(image_name="image name")
         self.assertEqual(config.image_name, "image name")
+
+    def test_has_default_value_for_ssh_user_name(self):
+        config = Configuration()
+        self.assertEqual(config.username, "ubuntu")
+
+    def test_has_default_value_for_ssh_private_key(self):
+        config = Configuration()
+        self.assertEqual(config.ssh_private_key, expanduser("~/.ssh/id_rsa"))

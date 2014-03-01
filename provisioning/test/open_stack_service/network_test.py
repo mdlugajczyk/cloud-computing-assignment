@@ -20,6 +20,7 @@ ROUTER_ID = "router id"
 ROUTER_NAME = "s210664-router"
 PORT_ID = "port id"
 SERVER_ID = "server id"
+IP_ADDRESS = "10.7.2.201"
 
 class NetworkServiceTest(unittest.TestCase):
 
@@ -69,9 +70,13 @@ class NetworkServiceTest(unittest.TestCase):
 
     def test_sets_ip_to_server(self):
         self._given_server_port_exists_with_delay()
-        with patch('time.sleep',mock_Mock()):
+        ip_response = {"floatingip": {"floating_ip_address": IP_ADDRESS}}
+        when(self._client).create_floatingip(any()).thenReturn(ip_response)
+        mocked_sleep = mock_Mock()
+        with patch('time.sleep',mocked_sleep):
             self._service.assign_ip(self._server)
         self._verify_ip_is_assigned()
+        mocked_sleep.assert_called_with(1)
 
 
     def _setup_client(self):
@@ -168,6 +173,7 @@ class NetworkServiceTest(unittest.TestCase):
                              {"floating_network_id": PUBLIC_NETWORK_ID,
                               "port_id": PORT_ID}}
         verify(self._client).create_floatingip(create_ip_request)
+        self.assertEquals(self._server.ip, IP_ADDRESS)
 
     def _given_router_alread_exists(self):
         routers = {"routers": [{"name": ROUTER_NAME, "id": ROUTER_ID}]}

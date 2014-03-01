@@ -8,6 +8,8 @@ class Configuration:
         self._set_value_or_defautl("ssh_key_name", ssh_key_name,
                                    "s210664-key")
         self._set_value_or_defautl("image_name", image_name, "ubuntu-precise")
+        self.username = "ubuntu"
+        self.ssh_private_key = self.ssh_key.replace(".pub", "")
 
     def _set_value_or_defautl(self, var, val, default):
         if val:
