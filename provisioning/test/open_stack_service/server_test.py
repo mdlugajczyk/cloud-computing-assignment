@@ -33,7 +33,7 @@ class ServerServiceTest(unittest.TestCase):
         self._boot_servers(3)
         for i in range(3):
             verify(self._servers_manager).create("s210664-vm-%d" % (i),
-                                                 any(), "1", nics=any(),
+                                                 any(), "3", nics=any(),
                                                  key_name=any())
 
     def test_creates_vms_with_proper_key(self):

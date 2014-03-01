@@ -32,6 +32,6 @@ class ServerService:
     def _boot_server(self, index, image, network):
         nics = [{"net-id": network}]
         server = self._servers_manager.create("s210664-vm-%d" % index,
-                                            image, "1", nics=nics,
+                                            image, "3", nics=nics,
                                             key_name=self._config.ssh_key_name)
         return Server(name=server.name, id=server.id)

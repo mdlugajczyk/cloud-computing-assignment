@@ -2,6 +2,8 @@ import unittest
 from lib.open_stack_service.network import NetworkService
 from lib.model.server import Server
 from mockito import Mock, verify, when, any
+from mock import patch
+from mock import Mock as mock_Mock
 
 
 NETWORK_ID = "5df84b0d2e4f48468824415146c684e5"
@@ -67,7 +69,8 @@ class NetworkServiceTest(unittest.TestCase):
 
     def test_sets_ip_to_server(self):
         self._given_server_port_exists_with_delay()
-        self._service.assign_ip(self._server)
+        with patch('time.sleep',mock_Mock()):
+            self._service.assign_ip(self._server)
         self._verify_ip_is_assigned()
 
 
