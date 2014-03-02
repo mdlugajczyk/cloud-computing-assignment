@@ -94,7 +94,7 @@ class SecurityServiceTest(unittest.TestCase):
         when(self._keys_manager).list().thenReturn(keys)
 
     def _setup_ssh_key_file(self):
-        self._open_name = 'lib.service.security.open'
+        self._open_name = '__builtin__.open'
         self._open_mocked = mock_open(read_data=SSH_KEY)
 
     def _setup_security_with_mocked_file(self):
