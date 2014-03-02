@@ -51,6 +51,7 @@ class ServerServiceTest(unittest.TestCase):
         verify(self._servers_manager).create(any(), any(), any(),
                                              nics=[{"net-id": NETWORK}],
                                              key_name=any())
+
     def test_destroys_created_vms(self):
         server1 = mockMock()
         server2 = mockMock()

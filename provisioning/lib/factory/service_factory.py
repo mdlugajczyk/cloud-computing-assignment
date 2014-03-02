@@ -1,6 +1,7 @@
 from lib.service.network import NetworkService
 from lib.service.security import SecurityService
 from lib.service.server import ServerService
+from lib.service.file_generator import FileGenerator
 from lib.service.node_availability_checker import NodeAvailabilityChecker
 import paramiko
 from lib.model.configuration import Configuration
@@ -34,3 +35,6 @@ class ServiceFactory:
         ssh = paramiko.SSHClient()
         conf = Configuration()
         return NodeAvailabilityChecker(ssh, conf)
+
+    def create_file_generator(self):
+        return FileGenerator(Configuration())
