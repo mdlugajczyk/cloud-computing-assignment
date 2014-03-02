@@ -3,7 +3,7 @@ from mockito import Mock, when, verify, any
 from mock import mock_open, patch
 from novaclient.v1_1.security_groups import SecurityGroup
 from novaclient.v1_1.keypairs import Keypair
-from lib.open_stack_service.security import SecurityService
+from lib.service.security import SecurityService
 from lib.model.configuration import Configuration
 
 
@@ -94,7 +94,7 @@ class SecurityServiceTest(unittest.TestCase):
         when(self._keys_manager).list().thenReturn(keys)
 
     def _setup_ssh_key_file(self):
-        self._open_name = 'lib.open_stack_service.security.open'
+        self._open_name = 'lib.service.security.open'
         self._open_mocked = mock_open(read_data=SSH_KEY)
 
     def _setup_security_with_mocked_file(self):

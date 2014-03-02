@@ -1,5 +1,5 @@
 import unittest
-from lib.open_stack_service.network import NetworkService
+from lib.service.network import NetworkService
 from lib.model.server import Server
 from mockito import Mock, verify, when, any
 from mock import patch

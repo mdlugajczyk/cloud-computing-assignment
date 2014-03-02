@@ -1,5 +1,5 @@
 import unittest
-from lib.open_stack_service.node_availability_checker import NodeAvailabilityChecker, NodeConnectionException
+from lib.service.node_availability_checker import NodeAvailabilityChecker, NodeConnectionException
 from lib.model.configuration import Configuration
 from lib.model.server import Server
 from mockito import Mock, verify, when, any

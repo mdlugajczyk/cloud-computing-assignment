@@ -1,7 +1,7 @@
-from lib.open_stack_service.network import NetworkService
-from lib.open_stack_service.security import SecurityService
-from lib.open_stack_service.server import ServerService
-from lib.open_stack_service.node_availability_checker import NodeAvailabilityChecker
+from lib.service.network import NetworkService
+from lib.service.security import SecurityService
+from lib.service.server import ServerService
+from lib.service.node_availability_checker import NodeAvailabilityChecker
 import paramiko
 from lib.model.configuration import Configuration
 from api_client_factory import ApiClientFactory

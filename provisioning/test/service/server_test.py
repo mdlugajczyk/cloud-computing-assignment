@@ -3,7 +3,7 @@ from mockito import Mock, verify, any, when
 from mock import Mock as mockMock
 from novaclient.v1_1.images import Image
 from novaclient.v1_1.servers import Server as NovaServer
-from lib.open_stack_service.server import ServerService
+from lib.service.server import ServerService
 from lib.model.configuration import Configuration
 
 IMAGE_ID = "image id"
