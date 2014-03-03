@@ -1,0 +1,34 @@
+- hosts: mpi_nodes
+  sudo: True
+  tasks: 
+
+    - name: Update apt repositories
+      action: apt update_cache=True
+
+    - name : Install dependencies
+      action: apt pkg={{ item }} state=latest
+      with_items:
+        - gcc
+        - make
+        - mpich2
+        - libnss-myhostname
+        - mpich2
+        - openmpi-bin
+        
+    - name : Add mpi user
+      user: name=mpiuser state=present generate_ssh_key=yes password=mpiuser
+
+    - name: Create directory for ssh keys
+      action: file path=/home/mpiuser/.ssh state=directory mode=750 owner=mpiuser group=mpiuser 
+
+    - name: Copy mpiuser ssh private key to ubuntu user
+      action: command cp /home/mpiuser/.ssh/id_rsa /home/ubuntu/.ssh/id_rsa
+
+    - name: Copy mpiuser ssh public key to ubuntu user
+      action: command cp /home/mpiuser/.ssh/id_rsa.pub /home/ubuntu/.ssh/id_rsa.pub
+
+    - name: Add permissions to .ssh directory
+      action: command chown -R mpiuser:mpiuser /home/mpiuser/.ssh
+
+    - name: Copy authorized_keys to allow mpi acces through ssh
+      action: command cp /home/ubuntu/.ssh/authorized_keys /home/mpiuser/.ssh
