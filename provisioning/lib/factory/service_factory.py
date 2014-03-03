@@ -4,6 +4,7 @@ from lib.service.server import ServerService
 from lib.service.file_generator import FileGenerator
 from lib.service.node_availability_checker import NodeAvailabilityChecker
 import paramiko
+import logging
 from lib.model.configuration import Configuration
 from api_client_factory import ApiClientFactory
 
@@ -34,7 +35,11 @@ class ServiceFactory:
     def create_node_checker(self):
         ssh = paramiko.SSHClient()
         conf = Configuration()
-        return NodeAvailabilityChecker(ssh, conf)
+        return NodeAvailabilityChecker(ssh, conf, self.create_logger())
 
     def create_file_generator(self):
         return FileGenerator(Configuration())
+
+    def create_logger(self):
+        logging.basicConfig(format='%(message)s')
+        return logging.getLogger("cluster_builder_logger")

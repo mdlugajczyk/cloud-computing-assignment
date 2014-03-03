@@ -24,9 +24,9 @@ class ClusterBuilder:
         self._setup_security()
         self._boot_vms()
         self._assign_ip()
-        self._wait_for_nodes()
         self._generate_host_files()
-        
+        self._wait_for_nodes()
+
     def _setup_network(self):
         self._logger.info("Configuring network...")
         self._network_id = self._network.setup_network()

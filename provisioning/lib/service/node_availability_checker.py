@@ -4,14 +4,16 @@ import paramiko
 
 TIMEOUT = 60*5
 
+
 class NodeConnectionException(Exception):
     pass
 
 class NodeAvailabilityChecker:
     
-    def __init__(self, ssh_client, configuration):
+    def __init__(self, ssh_client, configuration, logger):
         self._ssh = ssh_client
         self._conf = configuration
+        self._logger = logger
         self._ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     def wait_for_nodes(self, nodes):
@@ -20,10 +22,13 @@ class NodeAvailabilityChecker:
             self._ssh_to_node(node)
 
     def _ssh_to_node(self, node):
+        message = "Waiting for %s at %s to become available..."
+        self._logger.info(message % (node.name, node.ip))
         while self._timeout():
             if self._try_ssh_to_node(node):
                 return
-        raise NodeConnectionException()
+        raise NodeConnectionException("Timeout, after waiting for %s s" %
+                                      TIMEOUT)
 
     def _try_ssh_to_node(self, node):
         try:
