@@ -10,6 +10,9 @@ float random_float() {
   return 100*(float)rand()/RAND_MAX;
 }
 
+/*
+ * Returns matrix with random entires from interval [0,100]
+ */
 matrix *random_matrix(int rows, int cols) {
   int i,j;
   matrix *m = alloc_matrix(rows, cols);

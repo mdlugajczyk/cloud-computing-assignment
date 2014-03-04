@@ -21,7 +21,7 @@ matrix *multiply(matrix *a, matrix *b) {
 
 void write_result(char *filename, matrix *m, double t) {
   FILE *f;
-  if ((f = fopen(filename, "w+")) == NULL) {
+  if ((f = fopen(filename, "w")) == NULL) {
     error("Can't open output file.");
   }
   fprintf(f, "%f\n", t);
