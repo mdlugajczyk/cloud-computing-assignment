@@ -1,4 +1,4 @@
-CC=gcc
+CC=mpicc
 CCFLAGS=-Wall -Wextra
 DEPS = matrix.h
 
@@ -10,3 +10,5 @@ generate: generate.o matrix.o
 
 multiply: multiply.o matrix.o
 	$(CC) $(CCFLAGS) -o multiply multiply.o matrix.o
+
+all: multiply generate

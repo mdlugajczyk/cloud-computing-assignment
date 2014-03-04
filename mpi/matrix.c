@@ -10,14 +10,22 @@ void error(char *str) {
 matrix *alloc_matrix(int r, int c) {
   int i;
   matrix *m = malloc(sizeof(matrix));
+  float *data;
+
+  // Allocate continous block of memmory for whole matrix.
+  if ((data = malloc(r * c * sizeof(float))) == NULL) {
+    error("Memory error.");
+  }
+  
   if ((m->data = malloc(r * sizeof(float *))) == NULL) {
     error("Memory error.");
   }
+
+  // Set the matrix to point to allocated continous memmory.
   for (i = 0; i < r; i++) {
-    if ((m->data[i] = malloc(c * sizeof(float))) == NULL) {
-      error("Memmory error.");
-    }
+    m->data[i] = &(data[c*i]);
   }
+  
   m->rows = r;
   m->cols = c;
 
