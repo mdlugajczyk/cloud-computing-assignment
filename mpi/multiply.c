@@ -19,15 +19,27 @@ matrix *multiply(matrix *a, matrix *b) {
   return result;
 }
 
-int main() {
-  matrix *l = read_matrix("m1.txt");
-  matrix *r = read_matrix("m2.txt");
-  matrix *mul = multiply(l, r);
-  print_matrix(l, stdout);
-  printf("\n");
-  print_matrix(r,stdout);
-  printf("\n");
-  print_matrix(mul, stdout);
-  
+void write_result(char *filename, matrix *m, double t) {
+  FILE *f;
+  if ((f = fopen(filename, "w+")) == NULL) {
+    error("Can't open output file.");
+  }
+  fprintf(f, "%f\n", t);
+  print_matrix(m, f);
+  fclose(f);
+}
+
+int main(int argc, char **argv) {
+  matrix *m1, *m2, *result;
+
+  if (argc != 4) {
+    printf("Usage: %s input1 input2 output\n", argv[0]);
+    return 1;
+  }
+
+  m1 = read_matrix(argv[1]);
+  m2 = read_matrix(argv[2]);
+  result = multiply(m1, m2);
+  write_result(argv[3], result, 0);
   return 0;
 }

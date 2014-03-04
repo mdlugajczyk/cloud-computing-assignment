@@ -59,10 +59,10 @@ matrix *read_matrix(char *filename) {
 
 void print_matrix(matrix *m, FILE *f) {
   int i,j;
+  fprintf(f, "%d\n%d\n", m->rows, m->cols);
   for (i = 0; i < m->rows; i++) {
     for (j = 0; j < m->cols; j++) {
-      fprintf(f, "%f ", m->data[i][j]);
+      fprintf(f, "%f\n", m->data[i][j]);
     }
-    printf("\n");
   }
 }
