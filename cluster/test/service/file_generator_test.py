@@ -26,9 +26,9 @@ class FileGeneratorTest(unittest.TestCase):
 
     def test_writes_mpi_hosts(self):
         self._generate_files()
-        self._verify_called_with("%s@%s\n" % (self._conf.username,
+        self._verify_called_with("%s@%s\n" % (self._conf.mpiuser,
                                             self._server1.ip))
-        self._verify_called_with("%s@%s\n" % (self._conf.username,
+        self._verify_called_with("%s@%s\n" % (self._conf.mpiuser,
                                               self._server2.ip))
 
     def test_writes_ansible_header(self):

@@ -15,3 +15,7 @@ class ServerTest(unittest.TestCase):
 
     def test_have_id(self):
         self.assertEqual(self._server.id, "id")
+
+    def test_have_available_flag(self):
+        self.assertFalse(self._server.available)
+    

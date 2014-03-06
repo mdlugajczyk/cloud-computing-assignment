@@ -33,8 +33,14 @@ class ServerServiceTest(unittest.TestCase):
         self._boot_servers(3)
         for i in range(3):
             verify(self._servers_manager).create("s210664-vm-%d" % (i),
-                                                 any(), "3", nics=any(),
+                                                 any(), any(), nics=any(),
                                                  key_name=any())
+
+    def test_boots_machines_with_selected_flavor(self):
+        self._conf.flavor = "1"
+        self._boot_servers(1)
+        verify(self._servers_manager).create(any(), any(), "1", nics=any(),
+                                             key_name=any())
 
     def test_creates_vms_with_proper_key(self):
         self._boot_servers(1)

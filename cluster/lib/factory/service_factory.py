@@ -11,8 +11,9 @@ from api_client_factory import ApiClientFactory
 
 class ServiceFactory:
 
-    def __init__(self):
+    def __init__(self, flavor):
         self._api_factory = ApiClientFactory()
+        self._config = Configuration(flavor=flavor)
 
     def create_network_service(self):
         quantum = self._api_factory.create_quantum_client()
@@ -22,23 +23,20 @@ class ServiceFactory:
         groups_manager = self._api_factory.create_security_groups_manager()
         rules_manager = self._api_factory.create_security_rules_manager()
         keypairs_manager = self._api_factory.create_keypairs_manager()
-        configuration = Configuration()
         return SecurityService(groups_manager, rules_manager,
-                               keypairs_manager, configuration)
+                               keypairs_manager, self._config)
 
     def create_server_service(self):
         servers_manager = self._api_factory.create_servers_manager()
         images_manager = self._api_factory.create_images_manager()
-        config = Configuration()
-        return ServerService(servers_manager, images_manager, config)
+        return ServerService(servers_manager, images_manager, self._config)
 
     def create_node_checker(self):
         ssh = paramiko.SSHClient()
-        conf = Configuration()
-        return NodeAvailabilityChecker(ssh, conf, self.create_logger())
+        return NodeAvailabilityChecker(ssh, self._config, self.create_logger())
 
     def create_file_generator(self):
-        return FileGenerator(Configuration())
+        return FileGenerator(self._config)
 
     def create_logger(self):
         logging.basicConfig(format='%(message)s')

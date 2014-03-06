@@ -12,9 +12,10 @@ class ClusterBuilder:
         self._logger = logger
         self._logger.setLevel(logging.DEBUG)
 
-    def build_cluster(self):
+    def build_cluster(self, nodes):
+        self._nodes = nodes
         try:
-            self._try_build_cluster()        
+            self._try_build_cluster()
         except Exception, e:
             self._logger.info(e)
             self._logger.info("Exiting...")
@@ -24,8 +25,8 @@ class ClusterBuilder:
         self._setup_security()
         self._boot_vms()
         self._assign_ip()
-        self._generate_host_files()
         self._wait_for_nodes()
+        self._generate_host_files()
 
     def _setup_network(self):
         self._logger.info("Configuring network...")
@@ -37,7 +38,7 @@ class ClusterBuilder:
 
     def _boot_vms(self):
         self._logger.info("Booting VMs...")
-        self._servers = self._servers_service.boot_servers(10,
+        self._servers = self._servers_service.boot_servers(self._nodes,
                                                           self._network_id)
         
     def _assign_ip(self):
@@ -48,7 +49,22 @@ class ClusterBuilder:
     def _wait_for_nodes(self):
         self._logger.info("Waiting for nodes to boot...")
         self._node_checker.wait_for_nodes(self._servers)
+        self._report_available_nodes()
 
     def _generate_host_files(self):
         self._logger.info("Generating host files...")
-        self._file_generator.create_host_files(self._servers)
+        self._file_generator.create_host_files(self._available_nodes())
+
+    def _report_available_nodes(self):
+        available = len(self._available_nodes())
+        if available == len(self._servers):
+            self._logger.info("All requested nodes are available.")
+        elif available > 0:
+            self._logger.info("%d node(s) are reachable:" % available)
+            for n in self._available_nodes():
+                self._logger.info(n.name)
+        else:
+            self._logger.info("No node is reachable.")
+
+    def _available_nodes(self):
+        return [n for n in self._servers if n.available]

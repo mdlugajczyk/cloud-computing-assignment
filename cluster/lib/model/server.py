@@ -4,3 +4,4 @@ class Server:
         self.name = name
         self.ip = ip
         self.id = id
+        self.available = False

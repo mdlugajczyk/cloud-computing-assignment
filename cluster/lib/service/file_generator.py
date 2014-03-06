@@ -14,7 +14,7 @@ class FileGenerator:
     def _write_mpi_nodes(self, f, nodes):
         node_format = "%s@%s\n"
         for node in nodes:
-            f.write(node_format % (self._conf.username,
+            f.write(node_format % (self._conf.mpiuser,
                                    node.ip))
     
     def _create_ansible_file(self, nodes):

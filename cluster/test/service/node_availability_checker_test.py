@@ -1,5 +1,5 @@
 import unittest
-from lib.service.node_availability_checker import NodeAvailabilityChecker, NodeConnectionException
+from lib.service.node_availability_checker import NodeAvailabilityChecker
 from lib.model.configuration import Configuration
 from lib.model.server import Server
 from mockito import Mock, verify, when, any
@@ -38,16 +38,22 @@ class NodeAvailabilityCheckerTest(unittest.TestCase):
                                                 self._server2])
         self._verify_connects_to_nodes_required_number_of_times(2)
 
+    def test_logs_failure(self):
+        self._when_connection_timeouts_for_first_time()
+        self._wait_for_nodes_with_mocked_sleep([self._server1,
+                                                self._server2])
+        self._verify_logs_failures(2)
+
+    def test_logs_success(self):
+        nodes = [self._server1, self._server2]
+        self._when_connection_timeouts_for_first_time()
+        self._wait_for_nodes_with_mocked_sleep(nodes)
+        self._verify_logs_nodes_available(nodes)
+        
     def test_waits_before_trying_another_connection(self):
         self._when_connection_timeouts_for_first_time()
         self._wait_for_nodes_with_mocked_sleep([self._server1])
-        self._mocked_sleep.assert_called_with(10)
-
-    def test_stops_retries_after_timeout(self):
-        mocked_time = mock_Mock()
-        mocked_time.side_effect=self._update_time
-        with patch('time.time', mocked_time):
-            self._verify_throws_timeout_exception()
+        self._mocked_sleep.assert_called_with(2)
 
     def test_logs_connection_attempts(self):
         self._wait_for_nodes_with_mocked_sleep([self._server1])
@@ -76,18 +82,19 @@ class NodeAvailabilityCheckerTest(unittest.TestCase):
                                            username=self._conf.username,
                                            key_filename=self._key,
                                            timeout=2)
+
+    def _verify_logs_failures(self, t):
+        verify(self._logger, times=t).info("Connection failed.")
+
+    def _verify_logs_nodes_available(self, nodes):
+        for node in nodes:
+            message = "Server %s is available." % node.name 
+            verify(self._logger).info(message)
         
     def _when_connection_timeouts_for_first_time(self):
         when_connect = when(self._ssh).connect(any(), username=any(),
                                                key_filename=any(),
                                                timeout=any())
-        second_node = when_connect.thenRaise(socket.timeout).thenReturn(None)
-        second_node.thenRaise(socket.timeout).thenReturn(None)
-
-    def _verify_throws_timeout_exception(self):
-        try:
-            self._wait_for_nodes_with_mocked_sleep([self._server1,
-                                                    self._server2])
-            raise Exception("Should throw timeout exception")
-        except NodeConnectionException:
-            pass
+        first_timeout = when_connect.thenRaise(socket.timeout)
+        second_timeout = first_timeout.thenRaise(socket.timeout)
+        second_timeout.thenReturn(None)
