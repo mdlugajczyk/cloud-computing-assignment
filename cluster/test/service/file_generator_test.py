@@ -16,12 +16,12 @@ class FileGeneratorTest(unittest.TestCase):
 
     def test_open_ansible_host_file(self):
         self._generate_files()
-        ansible_hosts_file = call('ansible_mpi.host', 'w') 
+        ansible_hosts_file = call(self._conf.ansible_hosts_file, 'w') 
         self.assertTrue(ansible_hosts_file in self._open.call_args_list)
 
     def test_open_mpi_host_file(self):
         self._generate_files()
-        mpi_hosts_file = call('mpi.host', 'w') 
+        mpi_hosts_file = call(self._conf.mpi_hosts_file, 'w') 
         self.assertTrue(mpi_hosts_file in self._open.call_args_list)
 
     def test_writes_mpi_hosts(self):

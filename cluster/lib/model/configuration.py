@@ -12,7 +12,10 @@ class Configuration:
         self._set_value_or_defautl("flavor", flavor, "3")
         self.username = "ubuntu"
         self.mpiuser = "mpiuser"
+        self.mpi_hosts_file = "mpi.host"
+        self.ansible_hosts_file = "ansible_mpi.host"
         self.ssh_private_key = self.ssh_key.replace(".pub", "")
+        self.playbook = "../ansible/mpi.yaml"
 
     def _set_value_or_defautl(self, var, val, default):
         if val:

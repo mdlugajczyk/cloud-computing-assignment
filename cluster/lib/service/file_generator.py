@@ -8,7 +8,7 @@ class FileGenerator:
         self._create_mpi_file(nodes)
 
     def _create_mpi_file(self, nodes):
-        with open('mpi.host', 'w') as f:
+        with open(self._conf.mpi_hosts_file, 'w') as f:
             self._write_mpi_nodes(f, nodes)
 
     def _write_mpi_nodes(self, f, nodes):
@@ -18,7 +18,7 @@ class FileGenerator:
                                    node.ip))
     
     def _create_ansible_file(self, nodes):
-        with open('ansible_mpi.host', 'w') as f:
+        with open(self._conf.ansible_hosts_file, 'w') as f:
             self._write_ansible_header(f)
             self._write_ansible_nodes(f, nodes)
 

@@ -9,6 +9,7 @@ class ClusterBuilder:
         self._servers_service = service_factory.create_server_service()
         self._node_checker = service_factory.create_node_checker()
         self._file_generator = service_factory.create_file_generator()
+        self._mpi_deployer = service_factory.create_mpi_deployer()
         self._logger = logger
         self._logger.setLevel(logging.DEBUG)
 
@@ -27,6 +28,7 @@ class ClusterBuilder:
         self._assign_ip()
         self._wait_for_nodes()
         self._generate_host_files()
+        self._deploy_mpi()
 
     def _setup_network(self):
         self._logger.info("Configuring network...")
@@ -68,3 +70,7 @@ class ClusterBuilder:
 
     def _available_nodes(self):
         return [n for n in self._servers if n.available]
+
+    def _deploy_mpi(self):
+        self._logger.info("Deploying mpi to cluster using ansible...")
+        self._mpi_deployer.deploy()

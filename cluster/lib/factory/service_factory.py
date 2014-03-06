@@ -1,3 +1,4 @@
+from lib.service.mpi_deployer import MpiDeployer
 from lib.service.network import NetworkService
 from lib.service.security import SecurityService
 from lib.service.server import ServerService
@@ -33,10 +34,14 @@ class ServiceFactory:
 
     def create_node_checker(self):
         ssh = paramiko.SSHClient()
-        return NodeAvailabilityChecker(ssh, self._config, self.create_logger())
+        return NodeAvailabilityChecker(ssh, self._config,
+                                       self.create_logger())
 
     def create_file_generator(self):
         return FileGenerator(self._config)
+
+    def create_mpi_deployer(self):
+        return MpiDeployer(self._config)
 
     def create_logger(self):
         logging.basicConfig(format='%(message)s')

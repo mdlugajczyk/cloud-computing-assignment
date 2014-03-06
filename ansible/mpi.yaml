@@ -12,7 +12,6 @@
         - make
         - mpich2
         - libnss-myhostname
-        - mpich2
         - openmpi-bin
         
     - name : Add mpi user
@@ -21,14 +20,8 @@
     - name: Create directory for ssh keys
       action: file path=/home/mpiuser/.ssh state=directory mode=750 owner=mpiuser group=mpiuser 
 
-    - name: Copy mpiuser ssh private key to ubuntu user
-      action: command cp /home/mpiuser/.ssh/id_rsa /home/ubuntu/.ssh/id_rsa
-
-    - name: Copy mpiuser ssh public key to ubuntu user
-      action: command cp /home/mpiuser/.ssh/id_rsa.pub /home/ubuntu/.ssh/id_rsa.pub
-
-    - name: Add permissions to .ssh directory
-      action: command chown -R mpiuser:mpiuser /home/mpiuser/.ssh
-
     - name: Copy authorized_keys to allow mpi acces through ssh
       action: command cp /home/ubuntu/.ssh/authorized_keys /home/mpiuser/.ssh
+
+    - name: Change the right on authorized_keys
+      action: command chown mpiuser:mpiuser /home/mpiuser/.ssh/authorized_keys

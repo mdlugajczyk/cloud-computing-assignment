@@ -1,36 +1,46 @@
 #!/bin/bash
 
-function generate_input {
-    if [ ! -f $1 ]
+if [ $# -ne 6 ]
 then
-    ./generate $2 $3 > $1
-fi  
-}
-
-if [ $# -ne 3 ]
-then
-    echo "Usage: $0 nodes rows cols";
+    echo "Usage: $0 nodes machinefile input1 input2 container output";
+    echo "$#";
     exit 1;
 fi
 
-INPUT1="input1_$2_$3.txt"
-INPUT2="input2_$2_$3.txt"
-OUTPUT="output_$2_$2.txt"
+nodes=$1
+machinefile=$2
+input1=$3
+input2=$4
+container=$5
+output=$6
 
 echo "Compiling program..."
-make all 1> /dev/null;
-
-echo "Generating input files..."
-generate_input $INPUT1 $2 $3
-generate_input $INPUT2 $2 $3
+make all 1> /dev/null
 
 echo "Uploading executable to nodes..."
 while read host; do
     scp multiply $host: 1> /dev/null
-done < ../mpi.host
+done < $machinefile
 
-root_node=$(cat ../mpi.host |head -n 1)
-scp $INPUT1 $root_node:
-scp $INPUT2 $root_node:
+echo "Uploading input files to root node..."
+root_node=$(cat $machinefile |head -n 1)
 
-mpirun -n $1 -machinefile ../mpi.host ./multiply $INPUT1 $INPUT2 $OUTPUT
+scp $input1 $root_node: 1> /dev/null
+scp $input2 $root_node: 1> /dev/null
+
+echo "Running the mpi program..."
+mpirun -n $1 -machinefile $machinefile ./multiply $input1 $input2 $output
+
+echo "Downloading output file..."
+scp $root_node:$output $output 1> /dev/null
+
+echo "Uploading results to swift..."
+swift upload $container $output 1> /dev/null
+
+echo "Done."
+
+
+
+
+
+

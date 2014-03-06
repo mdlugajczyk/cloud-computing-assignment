@@ -46,3 +46,12 @@ class ConfigurationTest(unittest.TestCase):
     def test_can_set_value_for_vm_flavor(self):
         config = Configuration(flavor="2")
         self.assertEqual(config.flavor, "2")
+
+    def test_has_default_value_for_playbook(self):
+        self.assertEqual(self._config.playbook, "../ansible/mpi.yaml")
+
+    def test_has_default_value_for_mpi_hosts_file(self):
+        self.assertEqual(self._config.mpi_hosts_file, "mpi.host")
+
+    def test_has_default_value_for_ansible_hosts_file(self):
+        self.assertEqual(self._config.ansible_hosts_file, "ansible_mpi.host")

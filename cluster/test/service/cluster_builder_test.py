@@ -13,6 +13,7 @@ class ClusterBuilderTest(unittest.TestCase):
         self._given_servers_service()
         self._given_node_checker()
         self._given_file_generator()
+        self._given_mpi_deployer()
         self._logger = Mock()
         self._builder = ClusterBuilder(self._factory, self._logger)        
 
@@ -51,6 +52,7 @@ class ClusterBuilderTest(unittest.TestCase):
         verify(self._logger).info("Assigning IP addresses...")
         verify(self._logger).info("Waiting for nodes to boot...")
         verify(self._logger).info("Generating host files...")
+        verify(self._logger).info("Deploying mpi to cluster using ansible...")
 
     def test_sets_logger_level(self):
         verify(self._logger).setLevel(logging.DEBUG)
@@ -86,6 +88,10 @@ class ClusterBuilderTest(unittest.TestCase):
         self._server2.available = True
         self._build_cluster()
         verify(self._file_generator).create_host_files([self._server2])
+
+    def test_deploys_mpi_to_nodes(self):
+        self._build_cluster()
+        verify(self._mpi_deployer).deploy()
         
     def _given_security_service(self):
         self._security = Mock()
@@ -118,6 +124,11 @@ class ClusterBuilderTest(unittest.TestCase):
         self._file_generator = Mock()
         when_create_generator = when(self._factory).create_file_generator()
         when_create_generator.thenReturn(self._file_generator)
+
+    def _given_mpi_deployer(self):
+        self._mpi_deployer = Mock()
+        when_create_deployer = when(self._factory).create_mpi_deployer()
+        when_create_deployer.thenReturn(self._mpi_deployer)
 
     def _build_cluster(self):
         self._builder.build_cluster(10)
