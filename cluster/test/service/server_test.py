@@ -1,6 +1,6 @@
 import unittest
 from mockito import Mock, verify, any, when
-from mock import Mock as mockMock
+from mock import Mock as mockMock, patch
 from novaclient.v1_1.images import Image
 from novaclient.v1_1.servers import Server as NovaServer
 from lib.service.server import ServerService
@@ -14,6 +14,7 @@ SERVER_NAME = "sever name"
 class ServerServiceTest(unittest.TestCase):
 
     def setUp(self):
+        self._mocked_sleep = mockMock()
         self._servers_manager = Mock()
         self._images_manager = Mock()
         self._conf = Configuration()
@@ -35,6 +36,12 @@ class ServerServiceTest(unittest.TestCase):
             verify(self._servers_manager).create("s210664-vm-%d" % (i),
                                                  any(), any(), nics=any(),
                                                  key_name=any())
+
+    def test_sleeps_before_booting_next_vm(self):
+        with patch('time.sleep', self._mocked_sleep):
+            self._boot_servers(2)
+        self._mocked_sleep.assert_called_with(5)
+        self.assertEqual(self._mocked_sleep.call_count, 2)
 
     def test_boots_machines_with_selected_flavor(self):
         self._conf.flavor = "1"
@@ -82,4 +89,7 @@ class ServerServiceTest(unittest.TestCase):
 
 
     def _boot_servers(self, number_servers):
-        return self._service.boot_servers(number_servers, NETWORK)
+        servers = []
+        with patch('time.sleep', self._mocked_sleep):
+            servers = self._service.boot_servers(number_servers, NETWORK)
+        return servers

@@ -1,4 +1,5 @@
 from lib.model.server import Server
+import time
 
 
 class ServerService:
@@ -21,6 +22,7 @@ class ServerService:
         servers = []
         for i in range(number_servers):
             server = self._boot_server(i, image, network)
+            time.sleep(5)
             servers.append(server)
         return servers
 
