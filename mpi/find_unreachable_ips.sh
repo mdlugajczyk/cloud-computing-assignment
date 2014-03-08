@@ -20,6 +20,6 @@ do
     ping_result=$(ssh $root_node "ping -c 4 $ip" | grep "Destination Host Unreachable")
     if [ -n "$ping_result" ]
     then
-	echo "$hosts" | grep  $ip | awk '{print "ID: ", $2,  "name: ", $4}'
+	echo "$hosts" | grep  "$ip," | awk '{print "ID: ", $2,  "name: ", $4}'
     fi
 done
