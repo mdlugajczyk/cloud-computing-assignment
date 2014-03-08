@@ -18,9 +18,11 @@ echo "Compiling program..."
 make all 1> /dev/null
 
 echo "Uploading executable to nodes..."
-while read host; do
+hosts=$(cat $machinefile)
+for host in $hosts
+do
     scp multiply $host: 1> /dev/null
-done < $machinefile
+done
 
 echo "Uploading input files to root node..."
 root_node=$(cat $machinefile |head -n 1)
@@ -38,9 +40,3 @@ echo "Uploading results to swift..."
 swift upload $container $output 1> /dev/null
 
 echo "Done."
-
-
-
-
-
-

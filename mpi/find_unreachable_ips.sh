@@ -11,7 +11,7 @@ then
 fi
 
 hosts=$(nova list |grep s210664)
-ips=$(nova list |grep s210664 | awk '{print $8}');
+ips=$(nova list --fields networks |grep s210664 | awk '{print $4}');
 root_node=$(cat $1 | head -n 1)
 echo "Unreachable VMs:"
 for str in $ips
