@@ -4,17 +4,15 @@
 ## SSH to first node from hosts file, and try to ping each other node.
 ## If node is unreachable, return it's name.
 
-
-if [ -ne $# 2 ]
+if [ $# -ne 1 ]
 then
     echo "Usage: $0 machinefile";
     exit 1
 fi
 
 hosts=$(nova list |grep s210664)
-ips=$(nova list |grep 210664 | awk '{print $12}');
+ips=$(nova list |grep s210664 | awk '{print $8}');
 root_node=$(cat $1 | head -n 1)
-
 echo "Unreachable VMs:"
 for str in $ips
 do
