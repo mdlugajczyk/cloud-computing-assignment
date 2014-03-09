@@ -27,11 +27,15 @@ done
 echo "Uploading input files to root node..."
 root_node=$(cat $machinefile |head -n 1)
 
-scp $input1 $root_node: 1> /dev/null
-scp $input2 $root_node: 1> /dev/null
+## remove directories from input path
+matrix1=$(basename $input1)
+matrix2=$(basename $input2)
+
+scp $input1 $root_node:$matrix1 1> /dev/null
+scp $input2 $root_node:$matrix2 1> /dev/null
 
 echo "Running the mpi program..."
-mpirun -n $1 -machinefile $machinefile ./multiply $input1 $input2 $output
+mpirun -n $1 -machinefile $machinefile ./multiply $matrix1 $matrix2 $output
 
 echo "Downloading output file..."
 scp $root_node:$output $output 1> /dev/null

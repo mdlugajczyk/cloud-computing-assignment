@@ -10,24 +10,33 @@ function generate_input {
     fi  
 }
 
-if [ $# -ne 4 ]
+if [ $# -ne 2 ]
 then
-    echo "Usage: $0 nodes machinefile rows cols ";
+    echo "Usage: $0 nodes machinefile ";
     exit 1;
 fi
 
-rows=$3
-cols=$4
-input1="input1-$rows-$cols.txt"
-input2="input2-$rows-$cols.txt"
-output="output-$rows-$cols.txt"
-
+nodes=$1
 hosts_file=$2
-container="test-container"
+container="s210664-results"
 
 echo "Generating input files..."
 generate_input $input1 $rows $cols
 generate_input $input2 $rows $cols
 
-echo "Starting run_bechmark..."
-./run_benchmark.sh $1 $hosts_file $input1 $input2 $container $output
+
+for size in 128 256 512 1024 2048; do
+    input1="inputs/input1-$size-$size.txt"
+    input2="inputs/input2-$size-$size.txt"
+    generate_input $input1 $size $size;
+    generate_input $input2 $size $size;
+
+    for i in 1 2 3 4 5; do
+	output="output-$i-$size-$size-$nodes.txt"
+	echo "Iteration $i for problem size $size..."
+	./run_benchmark.sh $nodes $hosts_file $input1 $input2 $container $output	
+    done
+    
+done
+
+
