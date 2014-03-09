@@ -1,0 +1,12 @@
+#!/bin/bash
+
+host_ids=$(nova list --fields name | grep "s210664-vm-" | awk '{print $2}');
+
+for host in $host_ids; do
+    ip=$(nova list --fields networks | grep $host | awk '{print $4}');
+    host_ip=$(ruby -e "a = '$ip'; puts a[a.index('=')+1..a.length-2]")
+    ip_id=$(quantum floatingip-list |grep $host_ip | awk '{print $2}');
+    nova delete $host;
+    echo "Deleted instance: $host";
+    quantum floatingip-delete $ip_id;
+done
