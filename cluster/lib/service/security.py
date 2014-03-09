@@ -6,17 +6,32 @@ IP_RANGE = "0.0.0.0/0"
 
 
 class SecurityService:
+    """
+    Provides abstraction over Open Stack security related APIs.
+    """
 
     def __init__(self, security_groups_manager,
                  security_rules_manager,
                  keypairs_manger,
                  configuration):
+        """
+        Creates new instance of SecurityService.
+
+        :param security_groups_manager: Manager for open stack security groups.
+        :param security_rules_manager: Manager for open stack security rules.
+        :param keypairs_manger: Manager for open stack keypairs.
+        """
         self._groups_manager = security_groups_manager
         self._rules_manager = security_rules_manager
         self._keypairs_manager = keypairs_manger
         self._configuration = configuration
 
     def setup_security(self):
+        """
+        Sets up security rules to enable ssh and ping. Adds ssh key.
+        
+        If the key or one of the rules is already present, it will be reused.
+        """
         self._setup_ssh_rule()
         self._setup_ping_rule()
         self._setup_ssh_key()

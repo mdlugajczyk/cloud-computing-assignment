@@ -1,4 +1,7 @@
 class Server:
+    """
+    Represents open stack server.
+    """
 
     def __init__(self, name=None, ip=None, id=None):
         self.name = name

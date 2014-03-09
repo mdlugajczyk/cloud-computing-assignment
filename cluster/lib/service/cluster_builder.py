@@ -2,8 +2,19 @@ import logging
 
 
 class ClusterBuilder:
+    """
+    Builds MPI cluster using services for accessing Open Stack APIs.
+
+    Cluster is provisioned using Ansible playbook.
+    """
 
     def __init__(self, service_factory, logger):
+        """
+        Creates new instance of ClusterBuilder.
+
+        :param service_factory: Factory for creating Open Stack services.
+        :param logger: Logger for logging progress.
+        """
         self._network = service_factory.create_network_service()
         self._security = service_factory.create_security_service()
         self._servers_service = service_factory.create_server_service()
@@ -14,6 +25,11 @@ class ClusterBuilder:
         self._logger.setLevel(logging.DEBUG)
 
     def build_cluster(self, nodes):
+        """
+        Builds MPI cluster.
+
+        :param nodes: Number of nodes to create.
+        """
         self._nodes = nodes
         try:
             self._try_build_cluster()

@@ -1,9 +1,23 @@
 class FileGenerator:
+    """
+    Generates host files for mpi and ansible.
+    File names are specified by the configuration object.
+    """
 
     def __init__(self, configuration):
+        """
+        Creates new instance of FileGenerator
+
+        :param configuration: Configuration object with names of host files.
+        """
         self._conf = configuration
-        
+
     def create_host_files(self, nodes):
+        """
+        Creates two host files - one for mpi, one for ansible.
+
+        :param nodes: Servers to be included in host files.
+        """
         self._create_ansible_file(nodes)
         self._create_mpi_file(nodes)
 

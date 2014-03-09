@@ -2,6 +2,9 @@ from os.path import expanduser
 
 
 class Configuration:
+    """
+    Represents configuration used for deploying new open stack VMs.
+    """
 
     def __init__(self, ssh_key=None, ssh_key_name=None, image_name=None,
                  flavor=None):

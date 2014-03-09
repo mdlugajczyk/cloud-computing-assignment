@@ -5,19 +5,39 @@ NETWORK_NAME = "s210664-assignment-net"
 SUBNET_NAME = "s210664-assignment-subnet"
 ROUTER_NAME = "s210664-router"
 
+
 class NetworkService:
+    """
+    Provides abstraction over Open Stack network APIs, allowing to setup
+    network infrastructure.
+    """
 
     def __init__(self, network_client):
+        """
+        Creates new instance of NetworkService.
+
+        :param network_client: Open Stack's neutron client.
+        """
         self._network_client = network_client
         self._network_id = None
 
     def assign_ip(self, server):
+        """
+        Assigns public, newly created floating ip to server.
+
+        :param server: Server to which floatip ip will be assigned.
+        """
         port_id = self._port_id_for_server(server.id)
         public_network = self._public_network_id()
         ip = self._create_ip_for_port_in_network(port_id, public_network)
         server.ip = ip
 
     def setup_network(self):
+        """
+        Creates network infrastrucute for cluster. Sets up network, sub net,
+        and router. If any part of network infrastructure with the same name
+        already exists, it will be reused.
+        """
         self._setup_network()
         self._setup_subnet()
         self._setup_router()

@@ -6,14 +6,35 @@ TIMEOUT = 60*5
 
 
 class NodeAvailabilityChecker:
-    
+    """
+    Allows to check if nodes are SSHable.
+
+    Used before starting ansible deployment, as it requires ssh access.
+    """
+
     def __init__(self, ssh_client, configuration, logger):
+        """
+        Creates new instance of NodeAvailabilityChecker.
+
+        :param ssh_client: Instance of Paramiko's ssh client used for
+        checking ssh connection.
+        :param configuration: Configuration object with information about
+        credentials.
+        :param logger: Logger for logging progress.
+        """
         self._ssh = ssh_client
         self._conf = configuration
         self._logger = logger
         self._ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     def wait_for_nodes(self, nodes):
+        """
+        Waits until all nodes become available or timeout occurs.
+        All nodes are checked for availability in turn.
+        Availability is checked by trying to establish ssh connection.
+
+        :param nodes: Nodes to check.
+        """
         all_nodes = list(nodes)
         self._start_time = time.time()
         while self._timeout() and len(all_nodes) > 0:
