@@ -22,8 +22,19 @@ Network infrastructure: network, sub-net, router is reused - if script finds
 that given infrastructure element with the same name already exists, it'll
 reuse it. Names of all elements are prefixed with student number.
 
+To avoid problems with ssh (which is used by ansible), ensure that ~/.ssh/known_hosts
+does not contain IP addresses assigned by open stack to newly created machines.
+Otherwise ansible will fail to connect to the nodes.
+
 Script will generate two 'host' files, one for ansible, one for MPI.
 MPI host file is used by the `run_benchmark.sh` and `run.sh` scripts.
+
+To delete cluster, run:
+
+	$ ./delete_cluster.sh
+
+It will find all nodes with name prefixed by student number, theirs floating IPs
+and delete them. Network infrastructure will not be deleted.
 
 
 # Handling node failures

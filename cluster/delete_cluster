@@ -8,5 +8,5 @@ for host in $host_ids; do
     ip_id=$(quantum floatingip-list |grep $host_ip | awk '{print $2}');
     nova delete $host;
     echo "Deleted instance: $host";
-    quantum floatingip-delete $ip_id;
+    quantum floatingip-delete $ip_id 2>/dev/null
 done
